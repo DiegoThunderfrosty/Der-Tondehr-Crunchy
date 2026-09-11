@@ -1,0 +1,18 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  portable-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build-tests -DCRUNCHY_BUILD_PLUGIN=OFF -DCRUNCHY_BUILD_TESTS=ON
+      - name: Build
+        run: cmake --build build-tests --config Release
+      - name: Test
+        run: ctest --test-dir build-tests -C Release --output-on-failure
+
