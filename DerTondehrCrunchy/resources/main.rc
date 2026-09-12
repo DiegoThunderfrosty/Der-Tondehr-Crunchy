@@ -188,8 +188,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 0,10,24,0
-PRODUCTVERSION 0,10,24,0
+FILEVERSION 0,10,25,0
+PRODUCTVERSION 0,10,25,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -204,8 +204,8 @@ BEGIN
     BEGIN
         BLOCK "040004e4"
         BEGIN
-            VALUE "FileVersion", "0.10.24"
-            VALUE "ProductVersion", "0.10.24"
+            VALUE "FileVersion", "0.10.25"
+            VALUE "ProductVersion", "0.10.25"
             VALUE "FileDescription", "Der Tondehr Crunchy"
             VALUE "InternalName", "Der Tondehr Crunchy"
             VALUE "ProductName", "Der Tondehr Crunchy"
@@ -233,5 +233,4 @@ END
 #include "..\config.h"
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-
 

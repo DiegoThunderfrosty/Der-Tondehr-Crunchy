@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(DerTondehrCrunchy VERSION 0.10.24 LANGUAGES C CXX)
+project(DerTondehrCrunchy VERSION 0.10.25 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

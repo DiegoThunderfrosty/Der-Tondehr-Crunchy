@@ -29,7 +29,15 @@ Guitar or DI -> Der Tondehr Crunchy -> cabinet impulse-response loader -> output
 
 ## Current status
 
-This package contains version `0.10.24`. The complete plugin and standalone build currently targets Windows x64. Portable DSP tests can be compiled on other operating systems, but plugin and standalone binaries for those platforms are not currently documented or supported by this repository.
+This package contains version `0.10.25`. The complete plugin and standalone build currently targets Windows x64. Portable DSP tests can be compiled on other operating systems, but plugin and standalone binaries for those platforms are not currently documented or supported by this repository.
+
+### Changes in 0.10.25
+
+- Improved the audible range of the Middle control in saturated Lead settings.
+- Kept the existing passive tone-stack topology and component values unchanged.
+- Added a broad 450 Hz model calibration ranging from -3 dB at Middle 0 to +3 dB at Middle 10.
+- Kept Middle 5 at unity so the previous default sound remains unchanged.
+- Added a DSP regression check for both halves of the Middle control range.
 
 ## Repository contents
 

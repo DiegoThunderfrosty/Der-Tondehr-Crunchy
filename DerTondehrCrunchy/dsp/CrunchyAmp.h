@@ -627,6 +627,8 @@ private:
     inputDC.Reset(); simulHfAudibility.Reset();
     power.Prepare(rate);
     toneStack.Prepare(rate);
+    middleAudibility.Reset();
+    middleAudibilityActive = false;
     eq.Prepare(rate);
 
     constexpr double rp = circuit::TriodeRpEstimate;
@@ -723,6 +725,24 @@ private:
   void UpdateFilters() {
     const double shift = controls::TrebleShift(current[TrebleShift], current[Lead]);
     toneStack.Configure(current[Treble], current[Bass], current[Middle], current[Volume], shift, current[RhythmBright]);
+
+    // Pass 9 resolves the physical Middle control as a 10K pot; that exact
+    // component and the complete passive T/M/B topology remain untouched in
+    // PassiveToneStack. The reduced real-time nonlinear stages can compress most
+    // of that passive 400-500 Hz delta in high-gain Lead operation, making the
+    // panel control much less audible than the decoded network itself. Restore
+    // only the masked perceptual delta with a broad unity-at-5 compensation bell.
+    // This is an explicit model calibration (like the Presence audibility shelf),
+    // not a new schematic component and not a replacement for the Pass-9 10K pot.
+    constexpr double middleAudibilityCenterHz = 450.0;
+    constexpr double middleAudibilityQ = 0.75;
+    constexpr double middleAudibilityDbPerKnobUnit = 0.60; // 0..10 => -3..+3 dB
+    const double middleGainDb = (current[Middle] - 5.0) * middleAudibilityDbPerKnobUnit;
+    const double middleA = std::pow(10.0, middleGainDb / 40.0);
+    const double middleW = 2.0 * kPi * middleAudibilityCenterHz;
+    middleAudibility.SetAnalog(middleW * middleW, middleA * middleW / middleAudibilityQ, 1.0,
+                              middleW * middleW, middleW / (middleA * middleAudibilityQ), 1.0, rate);
+
     for (int i = 0; i < 5; ++i) eq.SetBand(i, current[Eq80 + i]);
 
     const double leadPosition = Taper(current[LeadDrive]);
@@ -840,6 +860,19 @@ private:
 
     x = power.Process(x, current[PowerMode], current[ExportBias]);
 
+    // Apply the correction after the reduced nonlinear chain so heavy Lead
+    // saturation cannot erase it again. At the exact default Middle=5.00 this
+    // path sleeps, preserving the 0.10.24 default sound sample-for-sample.
+    const bool needMiddleAudibility = std::abs(current[Middle] - 5.0) > 1.0e-7 ||
+                                       std::abs(target[Middle] - 5.0) > 1.0e-7;
+    if (needMiddleAudibility) {
+      if (!middleAudibilityActive) { middleAudibility.Reset(); middleAudibilityActive = true; }
+      x = middleAudibility.Process(x);
+    } else if (middleAudibilityActive) {
+      middleAudibility.Reset();
+      middleAudibilityActive = false;
+    }
+
     // The extra later-Simul HF loss is inaudible in 10pF mode, so its recursive
     // filter can sleep completely at that settled endpoint.
     const double laterAmount = current[LaterSimul20p];
@@ -896,6 +929,7 @@ private:
   bool parametersMoving = false;
   bool leadPathActive = false;
   bool eqProcessingActive = false;
+  bool middleAudibilityActive = false;
   bool simulHfActive = false;
   int laterMixerRegion = -1;
   double eqEngagement = 0.0;
@@ -913,6 +947,7 @@ private:
   std::array<TriodeStage, 6> stages;
   std::array<CathodeNetwork, 6> cathodes;
   PlateLoadedCathodeSwitch bassShiftCathode, leadBrightCathode, deepCathode;
+  CircuitFilter middleAudibility;
   CircuitFilter preampCoupling, leadInput, leadInterstage, leadPlate;
   CircuitFilter recoveryCoupling, masterCoupling, eqInput, eqFeedbackHF, eqOutput;
   LeadReturnMixer leadReturnMixerBase, leadReturnMixerLaterSimul;

@@ -560,7 +560,7 @@ DerTondehrCrunchy::DerTondehrCrunchy(const InstanceInfo& info)
     g->AttachPopupMenuControl();
     g->AttachControl(new ITextControl(IRECT(28, 16, 830, 56), "DER TONDEHR  /  CRUNCHY",
       IText(30, ink, "Arial", EAlign::Near)));
-    g->AttachControl(new ITextControl(IRECT(30, 57, 990, 80), "GUITAR AMPLIFIER    /    6L6 SIMUL-CLASS + CLASS A    /    PASS 9 0.10.24",
+    g->AttachControl(new ITextControl(IRECT(30, 57, 990, 80), "GUITAR AMPLIFIER    /    6L6 SIMUL-CLASS + CLASS A    /    PASS 9 0.10.25",
       IText(13, muted, "Arial", EAlign::Near)));
     auto style = DEFAULT_STYLE.WithColor(kBG, panel).WithColor(kFG, IColor(255, 67, 71, 63))
       .WithColor(kPR, accent).WithColor(kFR, muted).WithColor(kHL, ink)

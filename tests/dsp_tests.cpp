@@ -241,6 +241,21 @@ int main() {
   Check(RenderToneRms(trebleShiftOn, 8000.0, 0.02) > RenderToneRms(trebleShiftOff, 8000.0, 0.02) * 1.05,
         "Treble Shift must retain its upper-band voicing change in Lead");
 
+  // 0.10.25 Middle audibility regression. Pass 9 already had the correct 10K
+  // pot and passive topology, but the complete high-gain model compressed the
+  // 400-500 Hz level delta almost flat in Lead. Middle=5 stays the exact neutral
+  // calibration point; both directions must now remain clearly audible.
+  auto middleLow = Defaults(); middleLow[Lead] = 1.0; middleLow[EqMode] = 1; middleLow[Middle] = 0.0;
+  auto middleMid = middleLow; middleMid[Middle] = 5.0;
+  auto middleHigh = middleLow; middleHigh[Middle] = 10.0;
+  const double middleLow450 = RenderToneRms(middleLow, 450.0, 0.04);
+  const double middleMid450 = RenderToneRms(middleMid, 450.0, 0.04);
+  const double middleHigh450 = RenderToneRms(middleHigh, 450.0, 0.04);
+  Check(middleMid450 > middleLow450 * 1.20,
+        "Middle 0->5 must produce a clearly audible 450 Hz rise in saturated Lead");
+  Check(middleHigh450 > middleMid450 * 1.20,
+        "Middle 5->10 must produce a clearly audible 450 Hz rise in saturated Lead");
+
   auto bassShiftOff = Defaults(); bassShiftOff[BassShift] = 0.0;
   auto bassShiftOn = bassShiftOff; bassShiftOn[BassShift] = 1.0;
   Check(RenderToneRms(bassShiftOn, 80.0, 0.02) > RenderToneRms(bassShiftOff, 80.0, 0.02) * 1.26,
