@@ -24,12 +24,23 @@ Guitar or DI -> Der Tondehr Crunchy -> cabinet impulse-response loader -> output
 - Input and output trims with peak meters and clipping indicators.
 - Selectable 1x, 2x, 4x, and 8x oversampling.
 - Six editor sizes with monitor-aware scaling.
+- Built-in browser for portable `.dtcpreset` files.
 - Mono and stereo processing.
 - Standalone input/output device, channel, sample-rate, and buffer selection.
 
 ## Current status
 
-This package contains version `0.10.25`. The complete plugin and standalone build currently targets Windows x64. Portable DSP tests can be compiled on other operating systems, but plugin and standalone binaries for those platforms are not currently documented or supported by this repository.
+This package contains version `0.10.26`. The complete plugin and standalone build currently targets Windows x64. Portable DSP tests can be compiled on other operating systems, but plugin and standalone binaries for those platforms are not currently documented or supported by this repository.
+
+### Changes in 0.10.26
+
+- Added a built-in browser for loading, saving, and deleting `.dtcpreset` files.
+- Added a versioned preset container with product identification and SHA-256 integrity validation.
+- Added stable preset control IDs so files do not depend on the internal parameter-enum order.
+- Added guarded preset-directory handling and atomic file replacement.
+- Added preset-format regression tests.
+- Included `Default.dtcpreset` and `1991 Black Distortion.dtcpreset` in the public `presets` folder.
+- Refined the scalable vector interface with additional chassis depth and panel detail.
 
 ### Changes in 0.10.25
 
@@ -44,7 +55,8 @@ This package contains version `0.10.25`. The complete plugin and standalone buil
 ```text
 Der-Tondehr-Crunchy/
 |-- DerTondehrCrunchy/       Plugin, DSP, UI, and resource source files
-|-- tests/                   Control, DSP, meter, and editor-scale tests
+|-- presets/                 Included Der Tondehr Crunchy preset files
+|-- tests/                   Control, DSP, meter, editor-scale, and preset tests
 |-- scripts/                 Dependency setup and build scripts
 |-- docs/                    Third-party license copies
 |-- .github/                 Issue, pull-request, and automation files
@@ -62,6 +74,27 @@ Der-Tondehr-Crunchy/
 
 Development references, manuals, circuit drawings, recording sessions, audio files, impulse responses, local builds, and downloaded dependencies are intentionally excluded. They are not needed to compile the source package.
 
+## Included presets
+
+The repository includes these portable presets:
+
+```text
+presets\Default.dtcpreset
+presets\1991 Black Distortion.dtcpreset
+```
+
+To use them:
+
+1. Keep the `presets` folder in a normal writable location on your computer.
+2. Open Der Tondehr Crunchy.
+3. Press the `+` button in the preset bar.
+4. Select the included `presets` folder.
+5. Click the preset field to open the browser.
+6. Single-click a preset to select it.
+7. Double-click the selected preset to load it.
+
+The `SAVE` button writes the current control state as a `.dtcpreset` file. `DEL` requires a second confirmation click before deleting the selected file. The selected preset directory is remembered locally and is not stored in the DAW project.
+
 ## Build requirements
 
 Before starting, you need all of the following:
@@ -76,7 +109,7 @@ Before starting, you need all of the following:
 8. PowerShell 5.1 or later.
 9. Free disk space for the source, dependencies, and build output.
 
-The known development configuration uses Visual Studio 2026 and CMake 3.25 or later. Other versions may work, but they are outside the documented configuration.
+The known development configuration uses Visual Studio Community 2026, MSVC v145, Windows SDK 10.0.28000.0, and CMake 4.3.1. When using Visual Studio 2026, use CMake 4.2 or later because earlier CMake versions do not provide the Visual Studio 18 2026 generator.
 
 ## Complete setup on a clean PC
 
@@ -102,8 +135,8 @@ A version number must be displayed. If PowerShell reports that `git` is not reco
 3. Open the **Workloads** tab.
 4. Select **Desktop development with C++**.
 5. In the workload details, confirm that these components are selected:
-   - MSVC build tools for x64/x86.
-   - Windows 10 SDK or Windows 11 SDK.
+   - Stable MSVC v145 build tools for x64/x86.
+   - Windows 11 SDK 10.0.28000.0, or the newest stable Windows 11 SDK available.
    - C++ CMake tools for Windows.
 6. Start the installation.
 7. Wait until every selected component has finished installing.

@@ -7,4 +7,4 @@ CMakeLists.txt text eol=lf
 *.ps1 text eol=crlf
 *.cmd text eol=crlf
 *.rc text eol=crlf
-
+*.dtcpreset binary

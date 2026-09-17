@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(DerTondehrCrunchy VERSION 0.10.25 LANGUAGES C CXX)
+project(DerTondehrCrunchy VERSION 0.10.26 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -64,6 +64,15 @@ if(CRUNCHY_BUILD_TESTS)
     target_compile_options(crunchy_editor_scale_tests PRIVATE /EHsc)
   endif()
   add_test(NAME crunchy_editor_scale COMMAND crunchy_editor_scale_tests)
+
+  add_executable(crunchy_preset_format_tests tests/preset_format_tests.cpp)
+  target_include_directories(crunchy_preset_format_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/DerTondehrCrunchy")
+  if(MSVC)
+    target_compile_options(crunchy_preset_format_tests PRIVATE /EHsc)
+  endif()
+  add_test(NAME crunchy_preset_format COMMAND crunchy_preset_format_tests
+    "${CMAKE_CURRENT_SOURCE_DIR}/presets/Default.dtcpreset"
+    "${CMAKE_CURRENT_SOURCE_DIR}/presets/1991 Black Distortion.dtcpreset")
 
   add_test(NAME crunchy_standalone_audio_policy
     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/scripts/validate_standalone_audio_patch.cmake")

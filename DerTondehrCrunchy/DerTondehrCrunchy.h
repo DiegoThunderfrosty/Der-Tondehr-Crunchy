@@ -4,6 +4,10 @@
 #include "dsp/PeakMeterState.h"
 
 #include <atomic>
+#include <cstdint>
+#include <string>
+
+class CrunchyPresetManagerControl;
 
 using namespace iplug;
 using namespace igraphics;
@@ -16,10 +20,12 @@ enum EControlTags {
   kCtrlTagLeadMaster,
   kCtrlTagLeadBright,
   // Standalone-only non-parameter selector. Appended to keep existing tags stable.
-  kCtrlTagStandaloneMonoInput
+  kCtrlTagStandaloneMonoInput,
+  kCtrlTagPresetManager
 };
 
 class DerTondehrCrunchy final : public Plugin {
+  friend class CrunchyPresetManagerControl;
 public:
   explicit DerTondehrCrunchy(const InstanceInfo& info);
 #if IPLUG_DSP
@@ -37,6 +43,48 @@ public:
   void OnUIOpen() override;
 #endif
 private:
+  static constexpr const char* kPresetExtension = ".dtcpreset";
+  static constexpr int kPresetMaxEntriesPerFolder = 4096;
+
+  bool SavePresetFile(const std::string& path);
+  bool LoadPresetFile(const std::string& path);
+  bool DeleteSelectedPresetFile();
+  bool PresetRootAvailable() const;
+  bool PresetPathIsInsideRoot(const std::string& path) const;
+  std::string PresetPreferencesPath() const;
+  void LoadPresetDirectoryPreference();
+  bool SavePresetDirectoryPreferenceValue(const std::string& root) const;
+  bool ComputePresetFileIdentity(const std::string& path, std::uint64_t& identity) const;
+  void NotifyHostCustomPresetStateChanged();
+#if IPLUG_EDITOR
+  void PromptSetPresetDirectory();
+  void RemovePresetDirectory();
+  void PromptSavePreset();
+  void MarkPresetUIChanged();
+  void PollPresetDirectoryChanges();
+  std::uint64_t ComputeCurrentPresetDirectoryFingerprint() const;
+  bool ArmSelectedPresetDelete();
+  void ClearPresetDeleteIdentity();
+#endif
+
+  std::string mPresetRootDirectory;
+  std::string mPresetCurrentDirectory;
+  std::string mPresetSelectedPath;
+  std::string mPresetStatusMessage;
+  bool mPresetStatusIsError = false;
+  std::atomic<unsigned int> mPresetUIRevision {0};
+  std::uint64_t mPresetDirectoryFingerprint = 0u;
+  bool mPresetDirectoryFingerprintValid = false;
+  std::int64_t mPresetLastDirectoryPollMs = 0;
+  bool mPresetBrowserOpen = false;
+  std::string mPresetPendingOverwritePath;
+  std::uint64_t mPresetPendingOverwriteIdentity = 0u;
+  bool mPresetPendingOverwriteValid = false;
+  std::uint64_t mPresetDeleteIdentity = 0u;
+  bool mPresetDeleteIdentityValid = false;
+  std::atomic<bool> mPresetRecallInProgress {false};
+  std::atomic<int> mPresetAudioBlocksInFlight {0};
+
 #if IPLUG_DSP
   crunchy::Parameters ReadParameters();
   crunchy::Amp mAmp;

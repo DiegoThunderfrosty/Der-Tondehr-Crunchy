@@ -11,6 +11,7 @@ iplug_add_plugin(DerTondehrCrunchy
     dsp/PeakMeterState.h
     dsp/SpringReverb.h
     ui/EditorScale.h
+    preset/CrunchyPresetFormat.h
     resources/resource.h
   FORMATS VST3 APP
 )

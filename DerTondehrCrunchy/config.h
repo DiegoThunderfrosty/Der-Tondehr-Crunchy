@@ -1,8 +1,8 @@
 #pragma once
 #define PLUG_NAME "Der Tondehr Crunchy"
 #define PLUG_MFR "Der Tondehr"
-#define PLUG_VERSION_HEX 0x00001019
-#define PLUG_VERSION_STR "0.10.25"
+#define PLUG_VERSION_HEX 0x0000101A
+#define PLUG_VERSION_STR "0.10.26"
 #define PLUG_UNIQUE_ID 'DtCr'
 #define PLUG_MFR_ID 'DTdh'
 #define PLUG_URL_STR ""

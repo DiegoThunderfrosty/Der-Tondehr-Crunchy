@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.26
+
+- Added a built-in `.dtcpreset` browser with load, save, and confirmed delete operations.
+- Added a versioned, product-specific preset format with SHA-256 integrity validation.
+- Added stable preset control IDs and validation for type, range, completeness, and duplicates.
+- Added guarded preset-directory access and atomic preset writes.
+- Added preset-format regression tests.
+- Included two ready-to-use presets in the public `presets` folder.
+- Refined the scalable vector interface and chassis presentation.
+
 ## 0.10.25
 
 - Improved Middle-control audibility after the saturated amplifier stages.
